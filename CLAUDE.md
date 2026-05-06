@@ -184,7 +184,7 @@ The free tier has no API keys, no third-party service credentials, no customer d
 
 | Milestone | Status | Closed at |
 |---|---|---|
-| M1 — Repo + CI infrastructure | _pending_ | — |
+| M1 — Repo + CI infrastructure | _closed_ | 2026-05-07 |
 | M2 — Package scaffolding + schema | _pending_ | — |
 | M3 — Data layer | _pending_ | — |
 | M4 — MCP tools + worker | _pending_ | — |
