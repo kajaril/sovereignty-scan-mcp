@@ -1,0 +1,41 @@
+{
+  "name": "@kajaril/sovereignty-scan-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for EU AI Act vendor sovereignty scanning. MIT-licensed free tier.",
+  "license": "MIT",
+  "author": "kajaril <studio@kajaril.com>",
+  "repository": "github:kajaril/sovereignty-scan-mcp",
+  "homepage": "https://mcp.kajaril.com/sovereignty-scan/",
+  "bugs": "https://github.com/kajaril/sovereignty-scan-mcp/issues",
+  "keywords": [
+    "mcp",
+    "eu-ai-act",
+    "sovereignty",
+    "cloudflare-workers",
+    "gdpr",
+    "compliance"
+  ],
+  "private": false,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check src",
+    "format": "biome check --write src",
+    "typecheck": "tsc --noEmit",
+    "prepare": "git config core.hooksPath .githooks"
+  },
+  "dependencies": {
+    "hono": "^4.6.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@cloudflare/vitest-pool-workers": "^0.16.0",
+    "@cloudflare/workers-types": "^4.20250214.0",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.0",
+    "wrangler": "^4.0.0"
+  }
+}
