@@ -185,12 +185,12 @@ The free tier has no API keys, no third-party service credentials, no customer d
 | Milestone | Status | Closed at |
 |---|---|---|
 | M1 — Repo + CI infrastructure | _closed_ | 2026-05-07 |
-| M2 — Package scaffolding + schema | _pending_ | — |
-| M3 — Data layer | _pending_ | — |
-| M4 — MCP tools + worker | _pending_ | — |
-| M5 — Seed data | _pending_ | — |
-| M6 — Configuration + deploy | _pending_ | — |
-| M7 — Tests, audit, publish | _pending_ | — |
+| M2 — Package scaffolding + schema | _closed_ | 2026-05-07 |
+| M3 — Data layer | _closed_ | 2026-05-07 |
+| M4 — MCP tools + worker | _closed_ | 2026-05-07 |
+| M5 — Seed data | _closed_ | 2026-05-07 |
+| M6 — Configuration + deploy | _closed_ | 2026-05-07 |
+| M7 — Tests, audit, publish | _closed_ | 2026-05-07 |
 
 Update this table as milestones close. The closing condition for Week 1 is all seven rows showing a date.
 

@@ -1,0 +1,5 @@
+#!/bin/sh
+# Biome check on staged TypeScript files. Pre-commit gate — no exceptions.
+set -e
+npx biome check --write src/
+git add src/
