@@ -1,0 +1,13 @@
+.claude/
+.githooks/
+.github/
+src/__tests__/
+audit/
+biome.json
+tsconfig.json
+vitest.config.ts
+wrangler.jsonc
+CLAUDE.md
+.claudeignore
+.wrangler/
+.wrangler/
