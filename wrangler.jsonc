@@ -43,5 +43,8 @@
   },
   "observability": {
     "enabled": true
-  }
+  },
+  "routes": [
+    { "pattern": "mcp.kajaril.com", "custom_domain": true }
+  ]
 }
