@@ -23,7 +23,7 @@
   // Cron warms KV cache from D1 every Sunday 00:00 UTC.
   // Does NOT re-verify provider data — provider cadence is manual quarterly per decision #6.
   "triggers": {
-    "crons": ["0 0 * * 0"]
+    "crons": ["0 0 * * 7"]
   },
   "unsafe": {
     "bindings": [
