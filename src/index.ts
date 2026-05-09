@@ -4,7 +4,7 @@ import { MCP_TOOLS, MCP_TOOL_DEFINITIONS } from "@/mcp";
 import { handleScheduled } from "@/scheduler";
 import { makeError } from "@/types";
 import type { Env, HealthPayload, MCPRequest } from "@/types";
-import { Hono } from "hono";
+import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -14,7 +14,8 @@ app.use("*", cors({ origin: "*" }));
 
 // /health — structured payload doubles as a freshness credential for DPO buyers.
 // schema_version tracks the D1 migration version, not the package version.
-app.get("/health", async (c) => {
+// Mounted at both /health and /sovereignty-scan/health (no redirect — same response, stable URL).
+async function handleHealth(c: Context<{ Bindings: Env }>) {
   const db = new ProviderDB(c.env.SOVEREIGN_DB_FREE);
   const cache = new ProviderCache(c.env.CACHE_KV);
 
@@ -50,12 +51,10 @@ app.get("/health", async (c) => {
   };
 
   return c.json(payload, status === "ok" ? 200 : 503);
-});
+}
 
-// /sovereignty-scan/health alias — served from the sub-path on mcp.kajaril.com.
-app.get("/sovereignty-scan/health", async (c) => {
-  return c.redirect("/health");
-});
+app.get("/health", handleHealth);
+app.get("/sovereignty-scan/health", handleHealth);
 
 // /sovereignty-scan/mcp — MCP JSON-RPC endpoint (protocol version 2024-11-05).
 app.post("/sovereignty-scan/mcp", async (c) => {
