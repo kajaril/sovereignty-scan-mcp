@@ -10,4 +10,4 @@ wrangler.jsonc
 CLAUDE.md
 .claudeignore
 .wrangler/
-.wrangler/
+.playwright-mcp/
