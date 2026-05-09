@@ -44,7 +44,5 @@
   "observability": {
     "enabled": true
   },
-  "routes": [
-    { "pattern": "mcp.kajaril.com", "custom_domain": true }
-  ]
+  "routes": [{ "pattern": "sovereignty-scan.kajaril.com", "custom_domain": true }]
 }

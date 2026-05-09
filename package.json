@@ -1,6 +1,6 @@
 {
   "name": "@kajaril/sovereignty-scan-mcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "MCP server for EU AI Act vendor sovereignty scanning. MIT-licensed free tier.",
   "license": "MIT",
   "author": "kajaril <studio@kajaril.com>",
@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git+https://github.com/kajaril/sovereignty-scan-mcp.git"
   },
-  "homepage": "https://mcp.kajaril.com/sovereignty-scan/",
+  "homepage": "https://kajaril.com/sovereignty-scan/",
   "bugs": "https://github.com/kajaril/sovereignty-scan-mcp/issues",
   "keywords": [
     "mcp",

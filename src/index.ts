@@ -54,10 +54,9 @@ async function handleHealth(c: Context<{ Bindings: Env }>) {
 }
 
 app.get("/health", handleHealth);
-app.get("/sovereignty-scan/health", handleHealth);
 
-// /sovereignty-scan/mcp — MCP JSON-RPC endpoint (protocol version 2024-11-05).
-app.post("/sovereignty-scan/mcp", async (c) => {
+// /mcp — MCP JSON-RPC endpoint (protocol version 2024-11-05).
+app.post("/mcp", async (c) => {
   // Rate limiting — decision #13: 100 req/day/IP, 5 req/sec burst.
   const ip = c.req.header("CF-Connecting-IP") ?? "unknown";
 
