@@ -61,10 +61,10 @@ describe("/health endpoint", () => {
   });
 });
 
-describe("/sovereignty-scan/mcp endpoint", () => {
+describe("/mcp endpoint", () => {
   it("initialize returns protocol version 2024-11-05", async () => {
     const env = await seededEnv();
-    const req = new Request("https://test.example/sovereignty-scan/mcp", {
+    const req = new Request("https://test.example/mcp", {
       method: "POST",
       headers: { "Content-Type": "application/json", "CF-Connecting-IP": "127.0.0.1" },
       body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "initialize", params: {} }),
@@ -77,7 +77,7 @@ describe("/sovereignty-scan/mcp endpoint", () => {
 
   it("tools/list returns 5 tools", async () => {
     const env = await seededEnv();
-    const req = new Request("https://test.example/sovereignty-scan/mcp", {
+    const req = new Request("https://test.example/mcp", {
       method: "POST",
       headers: { "Content-Type": "application/json", "CF-Connecting-IP": "127.0.0.1" },
       body: JSON.stringify({ jsonrpc: "2.0", id: 2, method: "tools/list" }),
@@ -91,7 +91,7 @@ describe("/sovereignty-scan/mcp endpoint", () => {
 
   it("tools/call scan_provider returns provider data", async () => {
     const env = await seededEnv();
-    const req = new Request("https://test.example/sovereignty-scan/mcp", {
+    const req = new Request("https://test.example/mcp", {
       method: "POST",
       headers: { "Content-Type": "application/json", "CF-Connecting-IP": "127.0.0.1" },
       body: JSON.stringify({
@@ -111,7 +111,7 @@ describe("/sovereignty-scan/mcp endpoint", () => {
   // Error envelope via HTTP: INPUT_INVALID
   it("tools/call with empty name returns INPUT_INVALID in result", async () => {
     const env = await seededEnv();
-    const req = new Request("https://test.example/sovereignty-scan/mcp", {
+    const req = new Request("https://test.example/mcp", {
       method: "POST",
       headers: { "Content-Type": "application/json", "CF-Connecting-IP": "127.0.0.1" },
       body: JSON.stringify({
@@ -136,7 +136,7 @@ describe("/sovereignty-scan/mcp endpoint", () => {
   // Error envelope: bad JSON → JSON-RPC parse error
   it("invalid JSON body returns HTTP 400 with parse error code -32700", async () => {
     const env = await seededEnv();
-    const req = new Request("https://test.example/sovereignty-scan/mcp", {
+    const req = new Request("https://test.example/mcp", {
       method: "POST",
       headers: { "Content-Type": "application/json", "CF-Connecting-IP": "127.0.0.1" },
       body: "not-json{{{",
@@ -150,7 +150,7 @@ describe("/sovereignty-scan/mcp endpoint", () => {
   // Error envelope: unknown tool → method not found
   it("unknown tool returns HTTP 404", async () => {
     const env = await seededEnv();
-    const req = new Request("https://test.example/sovereignty-scan/mcp", {
+    const req = new Request("https://test.example/mcp", {
       method: "POST",
       headers: { "Content-Type": "application/json", "CF-Connecting-IP": "127.0.0.1" },
       body: JSON.stringify({
