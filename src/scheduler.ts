@@ -3,7 +3,7 @@ import { ProviderDB } from "@/db";
 import { isErrorEnvelope } from "@/db";
 import type { Env } from "@/types";
 
-// Weekly cron: Sunday 00:00 UTC (wrangler.jsonc: "0 0 * * 0").
+// Weekly cron: Sunday 00:00 UTC (wrangler.jsonc: "0 0 * * 7").
 // Reads all providers from D1, writes per-provider KV keys, category indices,
 // all-IDs index, and last_refresh timestamp — decision #5.
 // This handler does NOT re-verify provider data. Provider updates follow decision #6
