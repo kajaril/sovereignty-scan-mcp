@@ -5,6 +5,23 @@ Code-only changes follow [semantic versioning](https://semver.org); data updates
 
 ---
 
+## [0.1.3] — 2026-05-14
+
+### Sync npm package with deployed Worker
+
+The npm package at 0.1.2 was published before the full 0.1.2 changes landed. This release brings the npm package in line with what is running in production.
+
+### Docs
+- README: fixed migration filename (`0001_init.sql` → `0001_providers.sql`), added client compatibility table, provider count, `scan_provider` example response, curl test snippets
+- Added `CONTRIBUTING.md` — provider submission workflow and code change guidelines
+- Added `SECURITY.md` — vulnerability reporting and data integrity report process
+
+### Dev
+- Biome upgraded 1.9.4 → 2.4.15 (config migrated)
+- TypeScript upgraded 5.9.3 → 6.0.3
+
+---
+
 ## [0.1.2] — 2026-05-07
 
 ### Data — 20 providers added (35 → 55 total)
