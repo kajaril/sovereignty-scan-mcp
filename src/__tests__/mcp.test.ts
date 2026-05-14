@@ -1,4 +1,5 @@
-import { ProviderDB, isErrorEnvelope } from "@/db";
+import { describe, expect, it } from "vitest";
+import { isErrorEnvelope, ProviderDB } from "@/db";
 import {
   getUsCloudActProviders,
   listProviders,
@@ -8,7 +9,6 @@ import {
 } from "@/mcp";
 import { runSeed } from "@/seed";
 import type { Env } from "@/types";
-import { describe, expect, it } from "vitest";
 import { makeTestEnv } from "./helpers";
 
 async function seededEnv(): Promise<Env> {

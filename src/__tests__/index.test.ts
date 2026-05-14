@@ -1,7 +1,7 @@
+import { describe, expect, it } from "vitest";
 import app from "@/index";
 import { runSeed } from "@/seed";
 import type { Env, HealthPayload } from "@/types";
-import { describe, expect, it } from "vitest";
 import { makeTestEnv } from "./helpers";
 
 async function seededEnv(): Promise<Env> {

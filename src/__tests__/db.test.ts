@@ -1,6 +1,6 @@
-import { ProviderDB, isErrorEnvelope } from "@/db";
-import { runSeed } from "@/seed";
 import { describe, expect, it } from "vitest";
+import { isErrorEnvelope, ProviderDB } from "@/db";
+import { runSeed } from "@/seed";
 import { makeTestEnv } from "./helpers";
 
 async function freshDb(): Promise<ProviderDB> {

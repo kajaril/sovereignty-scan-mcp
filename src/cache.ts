@@ -1,5 +1,5 @@
-import { hydrateProvider, makeError } from "@/types";
 import type { ErrorEnvelope, Provider, ProviderRow } from "@/types";
+import { hydrateProvider, makeError } from "@/types";
 
 // KV cache key strategy — decision #5.
 // Per-provider keys only. No snapshot-blob pattern.
