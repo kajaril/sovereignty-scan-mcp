@@ -1,0 +1,57 @@
+{
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "maintainers": ["kajaril"],
+  "name": "sovereignty-scan-mcp",
+  "display_name": "Sovereignty Scan",
+  "description": "EU AI Act vendor sovereignty scanner. Checks provider HQ country, data residency regions, EU residency option, US CLOUD Act exposure, and GDPR DPA availability across 55 tracked providers.",
+  "repository": "https://github.com/kajaril/sovereignty-scan-mcp",
+  "homepage": "https://kajaril.com/sovereignty-scan/",
+  "version": "0.1.3",
+  "license": "MIT",
+  "author": {
+    "name": "kajaril",
+    "url": "https://kajaril.com"
+  },
+  "url": "https://sovereignty-scan.kajaril.com/mcp",
+  "transport": "streamable-http",
+  "runtime": "typescript",
+  "categories": ["legal-compliance", "security"],
+  "keywords": [
+    "eu-ai-act",
+    "gdpr",
+    "sovereignty",
+    "compliance",
+    "cloud-act",
+    "data-residency",
+    "mcp",
+    "typescript",
+    "cloudflare-workers"
+  ],
+  "tools": [
+    {
+      "name": "scan_provider",
+      "description": "Returns the full jurisdictional profile for a single vendor: headquarters country, data residency regions, EU residency option, US CLOUD Act exposure, GDPR DPA availability, and legal framework."
+    },
+    {
+      "name": "scan_stack",
+      "description": "Aggregate jurisdictional summary for a stack of providers: CLOUD Act exposure count, EU residency coverage, and missing DPAs. Maximum 50 providers per call."
+    },
+    {
+      "name": "list_providers",
+      "description": "List all tracked providers, with optional category filter."
+    },
+    {
+      "name": "get_us_cloud_act_providers",
+      "description": "Returns all providers subject to US CLOUD Act compelled disclosure (18 U.S.C. § 2713)."
+    },
+    {
+      "name": "suggest_eu_alternatives",
+      "description": "Returns EU/EEA/UK/CH-based alternatives in the same category as the given provider. Alternatives have eu_residency_option=true and headquarters in an EU member state, EEA country, UK, or Switzerland. Capped at 10."
+    }
+  ],
+  "capabilities": {
+    "tools": true,
+    "prompts": false,
+    "resources": false
+  }
+}
