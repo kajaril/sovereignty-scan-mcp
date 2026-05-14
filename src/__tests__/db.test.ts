@@ -51,12 +51,12 @@ describe("ProviderDB", () => {
     }
   });
 
-  it("listAll returns all 35 providers", async () => {
+  it("listAll returns all 55 providers", async () => {
     const db = await freshDb();
     const result = await db.listAll();
     expect(isErrorEnvelope(result)).toBe(false);
     if (!isErrorEnvelope(result)) {
-      expect(result.length).toBe(35);
+      expect(result.length).toBe(55);
     }
   });
 
@@ -84,12 +84,12 @@ describe("ProviderDB", () => {
     }
   });
 
-  it("countAll returns 35", async () => {
+  it("countAll returns 55", async () => {
     const db = await freshDb();
     const result = await db.countAll();
     expect(isErrorEnvelope(result)).toBe(false);
     if (!isErrorEnvelope(result)) {
-      expect(result).toBe(35);
+      expect(result).toBe(55);
     }
   });
 

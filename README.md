@@ -54,12 +54,47 @@ Paid tier notifications: [studio@kajaril.com](mailto:studio@kajaril.com)
 
 Requires a Cloudflare account (Workers + D1 + KV).
 
-```
+**1. Clone and install**
+
+```sh
 git clone https://github.com/kajaril/sovereignty-scan-mcp
 cd sovereignty-scan-mcp
 npm install
-wrangler deploy
 ```
+
+**2. Create infrastructure**
+
+```sh
+npx wrangler d1 create sovereignty-db-free
+npx wrangler kv:namespace create CACHE_KV
+```
+
+Copy the IDs printed by each command into `wrangler.jsonc` under `d1_databases` and `kv_namespaces`.
+
+**3. Apply schema and seed data**
+
+```sh
+npx wrangler d1 execute sovereignty-db-free --remote --file=migrations/0001_init.sql
+node --input-type=module -e "
+  import { generateSeedSQL } from './src/seed.js';
+  process.stdout.write(generateSeedSQL());
+" | npx wrangler d1 execute sovereignty-db-free --remote --command=-
+```
+
+**4. Deploy**
+
+```sh
+npx wrangler deploy
+```
+
+**5. Create rate limiter namespaces** (if not already in `wrangler.jsonc`)
+
+```sh
+npx wrangler rate-limit:namespace create RATE_LIMITER
+npx wrangler rate-limit:namespace create BURST_LIMITER
+```
+
+The custom domain (`sovereignty-scan.kajaril.com`) in the default config is owned by kajaril — remove or replace the `routes` entry with your own domain or use the default `*.workers.dev` URL.
 
 ## Health
 
@@ -67,7 +102,20 @@ wrangler deploy
 GET https://sovereignty-scan.kajaril.com/health
 ```
 
-Returns provider count, cache age, and schema version.
+Returns a structured payload (HTTP 200):
+
+```json
+{
+  "status": "ok",
+  "provider_count": 55,
+  "anthropic_path_count": 3,
+  "last_kv_refresh": "2026-05-11T00:00:00.000Z",
+  "cache_age_seconds": 86400,
+  "schema_version": "0001"
+}
+```
+
+`status` is `"ok"` when D1 is reachable, `"degraded"` otherwise. `cache_age_seconds` is `null` if the KV cache has never been warmed.
 
 ## License
 

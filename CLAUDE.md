@@ -152,7 +152,7 @@ The free tier has no API keys, no third-party service credentials, no customer d
 **Week 5–7 secrets (planned, not yet relevant):**
 - Stripe keys (test + live) — Cloudflare Secrets, scoped to paid-tier worker only
 - Customer API keys (paid tier auth) — hashed at rest, never logged, rotated per customer request
-- Resend API key (already exists, currently used by other surfaces) — scope per-worker
+- Outbound email API key — not yet deployed; Resend removed 2026-05-12. Future: CF Email Workers or Brevo. Decide at Week 5–7.
 
 **If a secret leaks:**
 1. Rotate immediately — the leaked value is dead the moment it touches any non-trusted surface, regardless of whether you "got it back"
