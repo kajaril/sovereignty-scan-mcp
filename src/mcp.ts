@@ -242,7 +242,7 @@ export async function suggestEuAlternatives(
       provider: input.name,
       category: input.category,
       alternatives: [],
-      note: `No EU-based alternatives in category ${input.category} are tracked. Submit a provider suggestion at projects.dev or email studio@kajaril.com.`,
+      note: `No EU-based alternatives in category ${input.category} are tracked. Submit a provider suggestion at kajaril.com/sovereignty-scan/ or email studio@kajaril.com.`,
     });
   }
 

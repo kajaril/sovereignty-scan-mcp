@@ -119,7 +119,7 @@ describe("list_providers", () => {
     const result = await listProviders({}, env);
     expect(result.isError).toBeFalsy();
     const parsed = JSON.parse(result.content[0]?.text ?? "{}");
-    expect(parsed.count).toBe(35);
+    expect(parsed.count).toBe(55);
     expect(Array.isArray(parsed.providers)).toBe(true);
   });
 

@@ -55,6 +55,18 @@ async function handleHealth(c: Context<{ Bindings: Env }>) {
 
 app.get("/health", handleHealth);
 
+// GET /mcp — 405 with guidance. MCP uses POST; SSE transport not implemented.
+app.get("/mcp", (c) => {
+  return c.json(
+    {
+      error: "Method Not Allowed",
+      detail:
+        "The MCP endpoint accepts POST requests only. Install via Claude Desktop or any HTTP MCP client. See https://kajaril.com/sovereignty-scan/",
+    },
+    405,
+  );
+});
+
 // /mcp — MCP JSON-RPC endpoint (protocol version 2024-11-05).
 app.post("/mcp", async (c) => {
   // Rate limiting — decision #13: 100 req/day/IP, 5 req/sec burst.
@@ -66,10 +78,10 @@ app.post("/mcp", async (c) => {
   ]);
 
   if (!daily.success || !burst.success) {
-    return c.json(
-      makeError("RATE_LIMIT_EXCEEDED", "Rate limit exceeded. Retry after 1 second."),
-      429,
-    );
+    const message = !daily.success
+      ? "Daily limit reached. Retry after 24 hours."
+      : "Too many requests. Retry after 1 second.";
+    return c.json(makeError("RATE_LIMIT_EXCEEDED", message), 429);
   }
 
   let body: MCPRequest;
@@ -100,7 +112,7 @@ app.post("/mcp", async (c) => {
       id: body.id,
       result: {
         protocolVersion: "2024-11-05",
-        serverInfo: { name: "sovereignty-scan-mcp", version: "0.1.0" },
+        serverInfo: { name: "sovereignty-scan-mcp", version: "0.1.2" },
         capabilities: { tools: {} },
       },
     });
@@ -113,6 +125,11 @@ app.post("/mcp", async (c) => {
       id: body.id,
       result: { tools: MCP_TOOL_DEFINITIONS },
     });
+  }
+
+  // MCP protocol: notifications/initialized — client confirmation, no response body required.
+  if (body.method === "notifications/initialized") {
+    return c.json({}, 200);
   }
 
   // MCP protocol: tools/call

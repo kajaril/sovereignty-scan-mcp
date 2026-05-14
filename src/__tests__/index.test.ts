@@ -35,7 +35,7 @@ describe("/health endpoint", () => {
     const body = (await res.json()) as HealthPayload;
     expect(body.schema_version).toBe("0001");
     expect(body.status).toBe("ok");
-    expect(body.provider_count).toBe(35);
+    expect(body.provider_count).toBe(55);
     expect(body.anthropic_path_count).toBe(3);
   });
 
