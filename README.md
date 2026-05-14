@@ -2,7 +2,7 @@
 
 MCP server for EU AI Act vendor sovereignty scanning. MIT-licensed free tier.
 
-Know where your stack processes data before the enforcer does.
+Know where your stack processes data before the enforcer does. Covers **55 providers across 12 categories**.
 
 ## Install
 
@@ -21,10 +21,49 @@ Add to `claude_desktop_config.json` and restart Claude Desktop. No account requi
 
 Free tier — MIT license, public endpoint, 100 req / day per IP.
 
+**Client compatibility**
+
+| Client | Status |
+|--------|--------|
+| Claude Desktop | ✓ Supported |
+| Cursor / Windsurf | ✓ Supported (HTTP MCP) |
+| claude.ai web | ✗ Not supported (no HTTP MCP) |
+
+## Quick test
+
+Verify the endpoint is live before installing:
+
+```sh
+curl -s https://sovereignty-scan.kajaril.com/health | jq .
+```
+
+Or call a tool directly:
+
+```sh
+curl -s -X POST https://sovereignty-scan.kajaril.com/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"scan_provider","arguments":{"name":"cloudflare"}}}' \
+  | jq .
+```
+
 ## Tools
 
 **`scan_provider`** — Full jurisdictional profile for a single vendor: headquarters country, data residency regions, EU residency option, US CLOUD Act exposure, GDPR DPA availability, and legal framework.
 - `name` — string, case-insensitive
+
+Example response:
+
+```json
+{
+  "name": "Cloudflare",
+  "hq_country": "US",
+  "data_residency_regions": ["US", "EU", "APAC"],
+  "eu_residency_option": true,
+  "us_cloud_act_subject": true,
+  "gdpr_dpa_available": true,
+  "legal_framework": "GDPR+SCC"
+}
+```
 
 **`scan_stack`** — Aggregate jurisdictional summary for a list of vendors: CLOUD Act exposure count, EU residency coverage, missing DPAs. Maximum 50 providers per call.
 - `providers` — string[], max 50
@@ -67,14 +106,16 @@ npm install
 ```sh
 npx wrangler d1 create sovereignty-db-free
 npx wrangler kv:namespace create CACHE_KV
+npx wrangler rate-limit:namespace create RATE_LIMITER
+npx wrangler rate-limit:namespace create BURST_LIMITER
 ```
 
-Copy the IDs printed by each command into `wrangler.jsonc` under `d1_databases` and `kv_namespaces`.
+Copy the IDs printed by each command into `wrangler.jsonc` under `d1_databases`, `kv_namespaces`, and `unsafe.bindings`.
 
 **3. Apply schema and seed data**
 
 ```sh
-npx wrangler d1 execute sovereignty-db-free --remote --file=migrations/0001_init.sql
+npx wrangler d1 execute sovereignty-db-free --remote --file=migrations/0001_providers.sql
 node --input-type=module -e "
   import { generateSeedSQL } from './src/seed.js';
   process.stdout.write(generateSeedSQL());
@@ -85,13 +126,6 @@ node --input-type=module -e "
 
 ```sh
 npx wrangler deploy
-```
-
-**5. Create rate limiter namespaces** (if not already in `wrangler.jsonc`)
-
-```sh
-npx wrangler rate-limit:namespace create RATE_LIMITER
-npx wrangler rate-limit:namespace create BURST_LIMITER
 ```
 
 The custom domain (`sovereignty-scan.kajaril.com`) in the default config is owned by kajaril — remove or replace the `routes` entry with your own domain or use the default `*.workers.dev` URL.
