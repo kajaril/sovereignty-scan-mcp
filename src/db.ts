@@ -1,5 +1,5 @@
-import { hydrateProvider, makeError } from "@/types";
 import type { ErrorEnvelope, Provider, ProviderRow } from "@/types";
+import { hydrateProvider, makeError } from "@/types";
 
 // Free-tier D1 queries only. No binding to sovereignty_db_paid — decision #1.
 export class ProviderDB {
