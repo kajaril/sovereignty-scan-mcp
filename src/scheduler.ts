@@ -17,9 +17,14 @@ export async function handleScheduled(env: Env): Promise<void> {
     return;
   }
 
-  const result = await cache.warmAll(providers);
-  if (result !== undefined && isErrorEnvelope(result)) {
-    // diagnostics_channel emission would go here in production observability setup.
+  try {
+    const result = await cache.warmAll(providers);
+    if (result !== undefined && isErrorEnvelope(result)) {
+      // diagnostics_channel emission would go here in production observability setup.
+      return;
+    }
+  } catch {
+    // KV write failure — log and exit cleanly; next cron will retry.
     return;
   }
 }
