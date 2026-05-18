@@ -141,17 +141,16 @@ Locked Day 1, even though the v0.1.0 secrets surface is small. Discipline propag
 - Logs (`diagnostics_channel` events scrub before emission — use `[REDACTED]` for any field that might contain a secret)
 - Error messages returned via the error envelope
 
-**v0.1.0 secrets inventory (Week 1):**
+**v0.2.0 secrets inventory:**
 - npm publish token: handled by GitHub Actions OIDC — no token stored
 - Cloudflare account ID `363dfad074317f1849e4fb0ae78243b3`: not a secret, fine in `wrangler.jsonc`
 - D1 database IDs (after `wrangler d1 create`): not secrets, fine in `wrangler.jsonc`
-- KV namespace ID: not a secret, fine in `wrangler.jsonc`
-
-The free tier has no API keys, no third-party service credentials, no customer data. This is intentional — it's why the free tier is the credential artifact.
+- KV namespace IDs (CACHE_KV, KEYS_KV): not secrets, fine in `wrangler.jsonc`
+- Customer API keys (free tier): stored as SHA-256 hashes in KEYS_KV with email + created_at. Raw keys are returned once at registration and never stored. Never logged.
 
 **Week 5–7 secrets (planned, not yet relevant):**
 - Stripe keys (test + live) — Cloudflare Secrets, scoped to paid-tier worker only
-- Customer API keys (paid tier auth) — hashed at rest, never logged, rotated per customer request
+- Paid-tier API key rotation/revocation endpoint
 - Outbound email API key — not yet deployed; Resend removed 2026-05-12. Future: CF Email Workers or Brevo. Decide at Week 5–7.
 
 **If a secret leaks:**
