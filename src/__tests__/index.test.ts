@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { generateKey, hashKey } from "@/auth";
 import app from "@/index";
 import { runSeed } from "@/seed";
 import type { Env, HealthPayload } from "@/types";
@@ -24,6 +25,21 @@ async function seededEnv(): Promise<Env> {
 // index.ts exports a { fetch, scheduled } object — use fetch directly.
 // Hono's app.fetch signature is (Request, Env, ExecutionContext) => Response.
 const ctx = {} as ExecutionContext;
+
+async function authedSeededEnv(): Promise<{ env: Env; authHeader: string }> {
+  const env = await seededEnv();
+  const key = generateKey();
+  const hash = await hashKey(key);
+  await env.KEYS_KV.put(
+    `apikey:${hash}`,
+    JSON.stringify({
+      email: "test@example.com",
+      plan: "free",
+      created_at: new Date().toISOString(),
+    }),
+  );
+  return { env, authHeader: `Bearer ${key}` };
+}
 
 describe("/health endpoint", () => {
   // Error envelope shape: structured payload with schema_version 0001
@@ -63,10 +79,14 @@ describe("/health endpoint", () => {
 
 describe("/mcp endpoint", () => {
   it("initialize returns protocol version 2024-11-05", async () => {
-    const env = await seededEnv();
+    const { env, authHeader } = await authedSeededEnv();
     const req = new Request("https://test.example/mcp", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "CF-Connecting-IP": "127.0.0.1" },
+      headers: {
+        "Content-Type": "application/json",
+        "CF-Connecting-IP": "127.0.0.1",
+        Authorization: authHeader,
+      },
       body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "initialize", params: {} }),
     });
     const res = await app.fetch(req, env, ctx);
@@ -76,10 +96,14 @@ describe("/mcp endpoint", () => {
   });
 
   it("tools/list returns 5 tools", async () => {
-    const env = await seededEnv();
+    const { env, authHeader } = await authedSeededEnv();
     const req = new Request("https://test.example/mcp", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "CF-Connecting-IP": "127.0.0.1" },
+      headers: {
+        "Content-Type": "application/json",
+        "CF-Connecting-IP": "127.0.0.1",
+        Authorization: authHeader,
+      },
       body: JSON.stringify({ jsonrpc: "2.0", id: 2, method: "tools/list" }),
     });
     const res = await app.fetch(req, env, ctx);
@@ -90,10 +114,14 @@ describe("/mcp endpoint", () => {
   });
 
   it("tools/call scan_provider returns provider data", async () => {
-    const env = await seededEnv();
+    const { env, authHeader } = await authedSeededEnv();
     const req = new Request("https://test.example/mcp", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "CF-Connecting-IP": "127.0.0.1" },
+      headers: {
+        "Content-Type": "application/json",
+        "CF-Connecting-IP": "127.0.0.1",
+        Authorization: authHeader,
+      },
       body: JSON.stringify({
         jsonrpc: "2.0",
         id: 3,
@@ -110,10 +138,14 @@ describe("/mcp endpoint", () => {
 
   // Error envelope via HTTP: INPUT_INVALID
   it("tools/call with empty name returns INPUT_INVALID in result", async () => {
-    const env = await seededEnv();
+    const { env, authHeader } = await authedSeededEnv();
     const req = new Request("https://test.example/mcp", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "CF-Connecting-IP": "127.0.0.1" },
+      headers: {
+        "Content-Type": "application/json",
+        "CF-Connecting-IP": "127.0.0.1",
+        Authorization: authHeader,
+      },
       body: JSON.stringify({
         jsonrpc: "2.0",
         id: 4,
@@ -135,10 +167,14 @@ describe("/mcp endpoint", () => {
 
   // Error envelope: bad JSON → JSON-RPC parse error
   it("invalid JSON body returns HTTP 400 with parse error code -32700", async () => {
-    const env = await seededEnv();
+    const { env, authHeader } = await authedSeededEnv();
     const req = new Request("https://test.example/mcp", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "CF-Connecting-IP": "127.0.0.1" },
+      headers: {
+        "Content-Type": "application/json",
+        "CF-Connecting-IP": "127.0.0.1",
+        Authorization: authHeader,
+      },
       body: "not-json{{{",
     });
     const res = await app.fetch(req, env, ctx);
@@ -149,10 +185,14 @@ describe("/mcp endpoint", () => {
 
   // Error envelope: unknown tool → method not found
   it("unknown tool returns HTTP 404", async () => {
-    const env = await seededEnv();
+    const { env, authHeader } = await authedSeededEnv();
     const req = new Request("https://test.example/mcp", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "CF-Connecting-IP": "127.0.0.1" },
+      headers: {
+        "Content-Type": "application/json",
+        "CF-Connecting-IP": "127.0.0.1",
+        Authorization: authHeader,
+      },
       body: JSON.stringify({
         jsonrpc: "2.0",
         id: 5,
@@ -162,5 +202,37 @@ describe("/mcp endpoint", () => {
     });
     const res = await app.fetch(req, env, ctx);
     expect(res.status).toBe(404);
+  });
+
+  // Auth: missing key → UNAUTHORIZED
+  it("missing Authorization header returns HTTP 401 with UNAUTHORIZED", async () => {
+    const env = await seededEnv();
+    const req = new Request("https://test.example/mcp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "CF-Connecting-IP": "127.0.0.1" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 6, method: "initialize", params: {} }),
+    });
+    const res = await app.fetch(req, env, ctx);
+    expect(res.status).toBe(401);
+    const body = (await res.json()) as { error?: { code: string } };
+    expect(body.error?.code).toBe("UNAUTHORIZED");
+  });
+
+  // Auth: invalid key → UNAUTHORIZED
+  it("invalid API key returns HTTP 401 with UNAUTHORIZED", async () => {
+    const env = await seededEnv();
+    const req = new Request("https://test.example/mcp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "CF-Connecting-IP": "127.0.0.1",
+        Authorization: "Bearer ks_free_notarealkey00000000000000000",
+      },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 7, method: "initialize", params: {} }),
+    });
+    const res = await app.fetch(req, env, ctx);
+    expect(res.status).toBe(401);
+    const body = (await res.json()) as { error?: { code: string } };
+    expect(body.error?.code).toBe("UNAUTHORIZED");
   });
 });

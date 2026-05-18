@@ -111,6 +111,7 @@ export function makeTestEnv(): Env {
   return {
     SOVEREIGN_DB_FREE: new MockD1Database(db) as unknown as D1Database,
     CACHE_KV: new MockKVNamespace() as unknown as KVNamespace,
+    KEYS_KV: new MockKVNamespace() as unknown as KVNamespace,
     RATE_LIMITER: RATE_LIMITER_STUB,
     BURST_LIMITER: RATE_LIMITER_STUB,
   };

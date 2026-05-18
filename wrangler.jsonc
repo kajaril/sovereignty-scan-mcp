@@ -18,6 +18,11 @@
       "binding": "CACHE_KV",
       "id": "9261517bb8424faeb06617f884f7f1f2",
       "preview_id": "82b38e0c73134a008250efb068b9dc1c"
+    },
+    {
+      "binding": "KEYS_KV",
+      "id": "8976ca4ab888400e82f635a9d42bab19",
+      "preview_id": "b6ae5121eb954ce0ad6ad439a074745d"
     }
   ],
   // Cron warms KV cache from D1 every Sunday 00:00 UTC.
