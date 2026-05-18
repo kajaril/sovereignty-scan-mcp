@@ -1,8 +1,10 @@
 import { type Context, Hono } from "hono";
 import { cors } from "hono/cors";
+import { validateKey } from "@/auth";
 import { ProviderCache } from "@/cache";
 import { isErrorEnvelope, ProviderDB } from "@/db";
 import { MCP_TOOL_DEFINITIONS, MCP_TOOLS } from "@/mcp";
+import { handleRegister } from "@/register";
 import { handleScheduled } from "@/scheduler";
 import type { Env, HealthPayload, MCPRequest } from "@/types";
 import { makeError } from "@/types";
@@ -55,6 +57,9 @@ async function handleHealth(c: Context<{ Bindings: Env }>) {
 
 app.get("/health", handleHealth);
 
+// POST /register — free API key registration. Returns key once; cannot be recovered.
+app.post("/register", handleRegister);
+
 // GET /mcp — 405 with guidance. MCP uses POST; SSE transport not implemented.
 app.get("/mcp", (c) => {
   return c.json(
@@ -69,6 +74,23 @@ app.get("/mcp", (c) => {
 
 // /mcp — MCP JSON-RPC endpoint (protocol version 2024-11-05).
 app.post("/mcp", async (c) => {
+  // Auth — API key required. Register free at kajaril.com/sovereignty-scan/
+  const authHeader = c.req.header("Authorization");
+  const rawKey = authHeader?.startsWith("Bearer ") ? authHeader.slice(7).trim() : null;
+  if (rawKey === null) {
+    return c.json(
+      makeError("UNAUTHORIZED", "API key required. Register free at kajaril.com/sovereignty-scan/"),
+      401,
+    );
+  }
+  const keyRecord = await validateKey(rawKey, c.env.KEYS_KV);
+  if (keyRecord === null) {
+    return c.json(
+      makeError("UNAUTHORIZED", "Invalid API key. Register free at kajaril.com/sovereignty-scan/"),
+      401,
+    );
+  }
+
   // Rate limiting — decision #13: 100 req/day/IP, 5 req/sec burst.
   const ip = c.req.header("CF-Connecting-IP") ?? "unknown";
 

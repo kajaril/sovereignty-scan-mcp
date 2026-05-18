@@ -1,5 +1,4 @@
-// Error codes locked at v0.1.0 — decision #4.
-// Adding a new code requires updating this union AND bumping the contract.
+// Error codes — decision #4. Contract bumped to v0.2.0 with UNAUTHORIZED addition.
 export type ErrorCode =
   | "INPUT_TOO_LARGE"
   | "INPUT_INVALID"
@@ -7,6 +6,7 @@ export type ErrorCode =
   | "CACHE_MISS"
   | "DB_UNAVAILABLE"
   | "RATE_LIMIT_EXCEEDED"
+  | "UNAUTHORIZED"
   | "INTERNAL";
 
 export interface MCPError {
@@ -78,11 +78,19 @@ export function hydrateProvider(row: ProviderRow): Provider {
   };
 }
 
+// Immutable record stored in KEYS_KV per registered API key.
+export interface ApiKeyRecord {
+  email: string;
+  plan: "free";
+  created_at: string;
+}
+
 // CF Workers environment bindings for the free-tier worker.
 // SOVEREIGN_DB_FREE only — no binding to sovereignty_db_paid (decision #1).
 export interface Env {
   SOVEREIGN_DB_FREE: D1Database;
   CACHE_KV: KVNamespace;
+  KEYS_KV: KVNamespace;
   RATE_LIMITER: {
     limit(options: { key: string }): Promise<{ success: boolean }>;
   };
