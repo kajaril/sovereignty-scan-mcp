@@ -5,6 +5,20 @@ Code-only changes follow [semantic versioning](https://semver.org); data updates
 
 ---
 
+## [0.2.0] — 2026-05-18
+
+### Breaking — API key required on `/mcp`
+
+All requests to `/mcp` now require an `Authorization: Bearer <key>` header. Missing or invalid keys return HTTP 401 with error code `UNAUTHORIZED`.
+
+**Migration:** register for a free key at `POST /register` (see README), then add the key to your MCP client config.
+
+### Added
+- `POST /register` — accepts an email address, returns a `ks_free_*` API key. Key is stored hashed (SHA-256) in a dedicated KV namespace. Duplicate emails are rejected with 409.
+- `UNAUTHORIZED` error code added to the error envelope contract (decision #4 — contract bumped to v0.2.0).
+
+---
+
 ## [0.1.3] — 2026-05-14
 
 ### Sync npm package with deployed Worker

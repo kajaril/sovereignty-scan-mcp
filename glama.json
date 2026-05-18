@@ -6,7 +6,7 @@
   "description": "EU AI Act vendor sovereignty scanner. Checks provider HQ country, data residency regions, EU residency option, US CLOUD Act exposure, and GDPR DPA availability across 55 tracked providers.",
   "repository": "https://github.com/kajaril/sovereignty-scan-mcp",
   "homepage": "https://kajaril.com/sovereignty-scan/",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "license": "MIT",
   "author": {
     "name": "kajaril",
