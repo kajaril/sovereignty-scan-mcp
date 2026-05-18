@@ -2,24 +2,41 @@
 
 MCP server for EU AI Act vendor sovereignty scanning. MIT-licensed free tier.
 
+[![npm](https://img.shields.io/npm/v/@kajaril/sovereignty-scan-mcp)](https://www.npmjs.com/package/@kajaril/sovereignty-scan-mcp)
+[![npm downloads](https://img.shields.io/npm/dw/@kajaril/sovereignty-scan-mcp)](https://www.npmjs.com/package/@kajaril/sovereignty-scan-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Know where your stack processes data before the enforcer does. Covers **55 providers across 12 categories**.
 
 ## Install
 
-Add to `claude_desktop_config.json` and restart Claude Desktop. No account required.
+**1. Get a free API key**
+
+```sh
+curl -s -X POST https://sovereignty-scan.kajaril.com/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"you@example.com"}' | jq .api_key
+```
+
+Save the returned key — it cannot be recovered.
+
+**2. Add to `claude_desktop_config.json`**
 
 ```json
 {
   "mcpServers": {
     "sovereignty-scan": {
       "type": "http",
-      "url": "https://sovereignty-scan.kajaril.com/mcp"
+      "url": "https://sovereignty-scan.kajaril.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ks_free_YOUR_KEY"
+      }
     }
   }
 }
 ```
 
-Free tier — MIT license, public endpoint, 100 req / day per IP.
+Restart Claude Desktop.
 
 **Client compatibility**
 
@@ -31,16 +48,17 @@ Free tier — MIT license, public endpoint, 100 req / day per IP.
 
 ## Quick test
 
-Verify the endpoint is live before installing:
+Verify the endpoint is live:
 
 ```sh
 curl -s https://sovereignty-scan.kajaril.com/health | jq .
 ```
 
-Or call a tool directly:
+Call a tool with your key:
 
 ```sh
 curl -s -X POST https://sovereignty-scan.kajaril.com/mcp \
+  -H "Authorization: Bearer ks_free_YOUR_KEY" \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"scan_provider","arguments":{"name":"cloudflare"}}}' \
   | jq .
@@ -84,7 +102,7 @@ Example response:
 | License | MIT | Subscription |
 | Status | Live | Coming soon |
 | Output | Jurisdiction, residency, legal framework, CLOUD Act | + Proprietary risk score + Remediation guidance |
-| Auth | None | API key |
+| Auth | API key (free registration) | API key |
 | Rate limit | 100 req / day / IP | Extended |
 
 Paid tier notifications: [studio@kajaril.com](mailto:studio@kajaril.com)
@@ -105,7 +123,8 @@ npm install
 
 ```sh
 npx wrangler d1 create sovereignty-db-free
-npx wrangler kv:namespace create CACHE_KV
+npx wrangler kv namespace create CACHE_KV
+npx wrangler kv namespace create KEYS_KV
 npx wrangler rate-limit:namespace create RATE_LIMITER
 npx wrangler rate-limit:namespace create BURST_LIMITER
 ```
