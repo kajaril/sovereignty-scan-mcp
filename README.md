@@ -5,6 +5,7 @@ MCP server for EU AI Act vendor sovereignty scanning. MIT-licensed free tier.
 [![npm](https://img.shields.io/npm/v/@kajaril/sovereignty-scan-mcp)](https://www.npmjs.com/package/@kajaril/sovereignty-scan-mcp)
 [![npm downloads](https://img.shields.io/npm/dw/@kajaril/sovereignty-scan-mcp)](https://www.npmjs.com/package/@kajaril/sovereignty-scan-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![sovereignty-scan-mcp MCP server](https://glama.ai/mcp/servers/kajaril/sovereignty-scan-mcp/badges/score.svg)](https://glama.ai/mcp/servers/kajaril/sovereignty-scan-mcp)
 
 Know where your stack processes data before the enforcer does. Covers **55 providers across 12 categories**.
 
